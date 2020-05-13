@@ -22,6 +22,7 @@ import java.io.File;
 
 import info.tol.gocd.task.util.TaskRequest;
 import info.tol.gocd.task.util.TaskResponse;
+import info.tol.gocd.util.Environment;
 import info.tol.gocd.util.archive.Assembly;
 import info.tol.gocd.util.request.RequestHandler;
 
@@ -75,14 +76,15 @@ public class TaskHandler implements RequestHandler {
     TaskRequest task = TaskRequest.of(request);
     String source = task.getConfig().getValue("source");
     String target = task.getConfig().getValue("target");
-
-    this.console.printLine("Launching command on: " + task.getWorkingDirectory());
-    this.console.printEnvironment(task.getEnvironment().toMap());
-
     File workingDir = new File(task.getWorkingDirectory()).getAbsoluteFile();
+
     try {
+      Environment env = task.getEnvironment().load(new File(workingDir, ".env"));
+      this.console.printLine("Launching command on: " + task.getWorkingDirectory());
+      this.console.printEnvironment(env.toMap());
+
       Assembly assembly = Assembly.of(workingDir);
-      assembly.setArchive(new File(workingDir, target));
+      assembly.setArchive(new File(workingDir, env.replaceByPattern(target)));
       for (String pattern : source.split("[\\n]")) {
         assembly.addPattern(pattern.trim());
       }

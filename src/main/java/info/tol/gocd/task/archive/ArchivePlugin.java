@@ -72,7 +72,7 @@ public class ArchivePlugin implements GoPlugin {
           return new ViewHandler("Archive", "/task.template.html").handle(request);
 
         case Request.TASK_CONFIG:
-          return new ConfigHandler().handle(request);
+          return ArchiveConfig.createGoApiResponse();
 
         case Request.TASK_VALIDATE:
           return new ValidateHandler().handle(request);

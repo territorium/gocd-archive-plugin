@@ -1,19 +1,11 @@
-# GoCD task plugin for creating archives
+# GoCD task plugin for Archives
 
-This is merely a skeleton plugin that plugin developers can fork to get quickly 
-started with writing task plugins for GoCD. It works out of the box, but you should change 
-it to do something besides executing `curl`.
- 
-All the documentation is hosted at https://plugin-api.gocd.io/current/tasks.
+The archive plugin create archives (.zip, .tar, .tar.gz) from a list of files. The plugin requires a 2 parameters to define the name of the archive.
 
+- *Archive Name*: The archive name, the task will recognize the archive type from the file name. (allows to declare Environment variables)
+- *Archive Files*: A comma separated list of files, that should by archived. The Pattern allows to define a file or a folder, that should be included into the assembly. Optionally following syntax is possible: path{[bin]/*.exe}. This will catch all EXE files from the *path* and include them into the archive into the folder *bin* 
 
-
-## Getting started
-
-The installer process creates an archive (.zip, .tar, .tar.gz) from a list of files. All files are flatten in the archive.
-
-- *Data Source Pattern*: A comma separated list of files, that should by archived. The Pattern allows to define a file or a folder, that should be included into the assembly. Optionally following syntax is possible: path{[bin]/*.exe}. This will catch all EXE files from the *path* and include them into the archive into the folder *bin* 
-- *Data Target Pattern*: The archive name, the task will recognize the archive type from the file name.
+The plugin supports the *.env* files from the *GIT Info* plugin, to load additional environment variables.
 
 
 ## Building the code base

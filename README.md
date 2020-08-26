@@ -3,7 +3,7 @@
 The archive plugin create archives (.zip, .tar, .tar.gz) from a list of files. The plugin requires a 2 parameters to define the name of the archive.
 
 - *Archive Name*: The archive name, the task will recognize the archive type from the file name. (allows to declare Environment variables)
-- *Archive Files*: A comma separated list of files, that should by archived. The Pattern allows to define a file or a folder, that should be included into the assembly. Optionally following syntax is possible: path{[bin]/*.exe}. This will catch all EXE files from the *path* and include them into the archive into the folder *bin* 
+- *Archive Files*: A comma separated list of files, that should by archived. The Pattern allows to define a file or a folder, that should be included into the assembly. Optionally following syntax is possible: path{bin/*.exe}. This will catch all EXE files from the *path* and include them into the archive into the folder *bin* 
 
 The plugin supports the *.env* files from the *GIT Info* plugin, to load additional environment variables.
 

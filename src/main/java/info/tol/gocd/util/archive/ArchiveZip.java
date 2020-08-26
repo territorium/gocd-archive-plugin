@@ -104,13 +104,12 @@ class ArchiveZip extends Archive {
      *
      * @param directory
      * @param pattern
-     * @param path
      */
     @Override
-    protected final void addToArchive(File directory, String pattern, String prefix) throws IOException {
+    protected final void addToArchive(File directory, String pattern) throws IOException {
       for (File file : ArchiveTree.findFiles(directory, pattern)) {
         if (file.isFile()) {
-          ZipEntry entry = ArchiveZip.createZipEntry(directory, file, prefix);
+          ZipEntry entry = ArchiveZip.createZipEntry(directory, file);
           getOutputStream().putNextEntry(entry);
           ArchiveUtil.fileToStream(file, getOutputStream());
         }
@@ -124,11 +123,10 @@ class ArchiveZip extends Archive {
    *
    * @param root
    * @param file
-   * @param path
    */
-  private static ZipEntry createZipEntry(File root, File file, String prefix) throws IOException {
+  private static ZipEntry createZipEntry(File root, File file) throws IOException {
     String relativePath = ArchiveUtil.slashify(root.toPath().relativize(file.toPath()));
-    return new ZipEntry((prefix == null ? "" : prefix + "/") + relativePath);
+    return new ZipEntry(relativePath);
   }
 
 }

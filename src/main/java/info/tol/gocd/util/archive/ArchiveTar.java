@@ -122,9 +122,9 @@ class ArchiveTar extends Archive {
      * @param location
      */
     @Override
-    protected final void addToArchive(File directory, String pattern, String location) throws IOException {
+    protected final void addToArchive(File directory, String pattern) throws IOException {
       for (File file : ArchiveTree.findFiles(directory, pattern)) {
-        TarArchiveEntry entry = ArchiveTar.createTarEntry(directory, file, location);
+        TarArchiveEntry entry = ArchiveTar.createTarEntry(directory, file);
         PosixFileAttributes attributes = PosixPerms.getAttributes(file);
         if (attributes != null) {
           entry.setMode(PosixPerms.toOctalFileMode(attributes.permissions()));
@@ -146,11 +146,9 @@ class ArchiveTar extends Archive {
    *
    * @param root
    * @param file
-   * @param path
    */
-  private static TarArchiveEntry createTarEntry(File root, File file, String location) throws IOException {
-    String relativePath = ArchiveUtil.slashify(root.toPath().relativize(file.toPath()));
-    String path = (location == null ? "" : location + "/") + relativePath;
+  private static TarArchiveEntry createTarEntry(File root, File file) throws IOException {
+    String path = ArchiveUtil.slashify(root.toPath().relativize(file.toPath()));
 
     // only create symlink entry if link target is inside archive
     if (ArchiveUtil.isSymbolicLink(file) && ArchiveUtil.resolvesBelow(file, root)) {

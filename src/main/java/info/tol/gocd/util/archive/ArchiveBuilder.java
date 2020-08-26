@@ -10,8 +10,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Gzipped Tar archiver which preserves
@@ -33,9 +31,6 @@ import java.util.regex.Pattern;
  * {@link ArchiveBuilder}.
  */
 public abstract class ArchiveBuilder implements Closeable {
-
-  private static final Pattern PATTERN = Pattern.compile("(?:\\[([^\\]]+)\\])?([^,]+)");
-
 
   private final OutputStream stream;
 
@@ -60,9 +55,8 @@ public abstract class ArchiveBuilder implements Closeable {
    *
    * @param directory
    * @param pattern
-   * @param location
    */
-  protected abstract void addToArchive(File directory, String pattern, String location) throws IOException;
+  protected abstract void addToArchive(File directory, String pattern) throws IOException;
 
   /**
    * Add a file to the {@link ArchiveBuilder} using the directory.
@@ -71,9 +65,8 @@ public abstract class ArchiveBuilder implements Closeable {
    * @param pattern
    */
   public void addFile(File directory, String pattern) throws IOException {
-    Matcher matcher = ArchiveBuilder.PATTERN.matcher(pattern);
-    while (matcher.find()) {
-      addToArchive(directory, matcher.group(2), matcher.group(1));
+    for (String path : pattern.split(",")) {
+      addToArchive(directory, path);
     }
   }
 

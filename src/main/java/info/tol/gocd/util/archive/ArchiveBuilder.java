@@ -55,18 +55,20 @@ public abstract class ArchiveBuilder implements Closeable {
    *
    * @param directory
    * @param pattern
+   * @param targetPath
    */
-  protected abstract void addToArchive(File directory, String pattern) throws IOException;
+  protected abstract void addToArchive(File directory, String pattern, String targetPath) throws IOException;
 
   /**
    * Add a file to the {@link ArchiveBuilder} using the directory.
    *
    * @param directory
    * @param pattern
+   * @param targetPath
    */
-  public void addFile(File directory, String pattern) throws IOException {
+  public void addFile(File directory, String pattern, String targetPath) throws IOException {
     for (String path : pattern.split(",")) {
-      addToArchive(directory, path);
+      addToArchive(directory, path, targetPath);
     }
   }
 
@@ -75,20 +77,22 @@ public abstract class ArchiveBuilder implements Closeable {
    *
    * @param directory
    * @param file
+   * @param targetPath
    */
-  public final void addFile(File directory, File file) throws IOException {
+  public final void addFile(File directory, File file, String targetPath) throws IOException {
     Path path = directory.toPath().relativize(file.toPath());
-    addFile(directory, path.toString().replace('\\', '/'));
+    addFile(directory, path.toString().replace('\\', '/'), targetPath);
   }
 
   /**
    * Archives the files.
    *
    * @param files
+   * @param targetPath
    */
-  public final void addFiles(List<File> files) throws IOException {
+  public final void addFiles(List<File> files, String targetPath) throws IOException {
     for (File file : files) {
-      addFile(file.getParentFile(), file);
+      addFile(file.getParentFile(), file, targetPath);
     }
   }
 
@@ -96,10 +100,11 @@ public abstract class ArchiveBuilder implements Closeable {
    * Archives the files in the directory
    *
    * @param directory
+   * @param targetPath
    */
-  public final void addDirectory(File directory) throws IOException {
+  public final void addDirectory(File directory, String targetPath) throws IOException {
     for (File file : directory.listFiles()) {
-      addFile(directory, file);
+      addFile(directory, file, targetPath);
     }
   }
 

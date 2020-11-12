@@ -5,7 +5,7 @@ import java.io.File;
 
 import info.tol.gocd.util.Environment;
 
-public class AssemblyTest {
+public class AssemblyZipTest {
 
   public static void main(String[] args) throws Exception {
     File workingDir = new File("/home/brigl/Public");

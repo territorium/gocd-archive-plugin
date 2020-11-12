@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  *
@@ -86,8 +87,12 @@ abstract class ArchiveUtil {
     Path resolvedLinkTarget = sourcePath.getParent().resolve(linkTarget);
     Path relative = baseDir.toPath().relativize(resolvedLinkTarget);
     Path normalizedSymLinkPath = relative.normalize();
-    System.out.println("Computed symlink target path " + ArchiveUtil.slashify(normalizedSymLinkPath) + " for symlink "
-        + source + " relative to " + baseDir);
+    System.out.println("Computed symlink target path "
+        + ArchiveUtil.slashify(normalizedSymLinkPath)
+        + " for symlink "
+        + source
+        + " relative to "
+        + baseDir);
     return normalizedSymLinkPath;
   }
 
@@ -98,5 +103,10 @@ abstract class ArchiveUtil {
     } else {
       return pathString.replace(File.separatorChar, '/');
     }
+  }
+
+  public static String relativePath(File root, File file, String targetPath) {
+    String path = ArchiveUtil.slashify(root.toPath().relativize(file.toPath()));
+    return (targetPath == null) ? path : ArchiveUtil.slashify(Paths.get(targetPath, path));
   }
 }

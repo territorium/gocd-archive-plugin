@@ -85,9 +85,7 @@ public class TaskHandler implements RequestHandler {
 
       Assembly assembly = Assembly.of(workingDir);
       assembly.setArchive(new File(workingDir, env.replaceByPattern(target)));
-      for (String pattern : source.split("[\\n]")) {
-        assembly.addPattern(pattern.trim());
-      }
+      assembly.setSources(env.replaceByPattern(source));
       assembly.build(m -> this.console.printLine(m));
       return TaskResponse.success("Assemply created").toResponse();
     } catch (Throwable e) {

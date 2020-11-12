@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
  */
 public class Assembly {
 
-  private static final Pattern PATTERN = Pattern.compile("^([^\\{]+)(?:\\{(.+)\\})?$");
+  private static final Pattern PATTERN = Pattern.compile("^([^\\{]*)(?:\\{(.+)\\})?(?:;(.+))?$");
 
   private final File           workingDir;
 
@@ -60,6 +60,18 @@ public class Assembly {
    *
    * @param archive
    */
+  public final Assembly setSources(String pattern) {
+    for (String p : pattern.split("[\\n]")) {
+      addPattern(p.trim());
+    }
+    return this;
+  }
+
+  /**
+   * Set the archive
+   *
+   * @param archive
+   */
   public final Assembly addPattern(String pattern) {
     this.patterns.add(pattern);
     return this;
@@ -74,17 +86,19 @@ public class Assembly {
       for (String input : this.patterns) {
         Matcher matcher = Assembly.PATTERN.matcher(input);
         if (matcher.find()) {
-          File file = new File(this.workingDir, matcher.group(1));
+          File file = new File(matcher.group(1));
+          if (!file.exists())
+            file = new File(this.workingDir, matcher.group(1));
           if (!file.exists()) {
             throw new IOException("File '" + matcher.group(1) + "' does not exist");
           }
 
           if (matcher.group(2) != null) {
-            builder.addFile(file, matcher.group(2));
+            builder.addFile(file, matcher.group(2), matcher.group(3));
           } else if (file.isDirectory()) {
-            builder.addDirectory(file);
+            builder.addDirectory(file, null);
           } else {
-            builder.addFile(file.getParentFile(), file);
+            builder.addFile(file.getParentFile(), file, null);
           }
         } else {
           throw new IOException("Couldn't find pattern '" + input + "'");

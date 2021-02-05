@@ -62,14 +62,12 @@ public abstract class ArchiveBuilder implements Closeable {
   /**
    * Add a file to the {@link ArchiveBuilder} using the directory.
    *
-   * @param directory
-   * @param pattern
+   * @param location
+   * @param sourcePath
    * @param targetPath
    */
-  public void addFile(File directory, String pattern, String targetPath) throws IOException {
-    for (String path : pattern.split(",")) {
-      addToArchive(directory, path, targetPath);
-    }
+  public void addFile(File location, String sourcePath, String targetPath) throws IOException {
+      addToArchive(location, sourcePath, targetPath);
   }
 
   /**
@@ -100,11 +98,10 @@ public abstract class ArchiveBuilder implements Closeable {
    * Archives the files in the directory
    *
    * @param directory
-   * @param targetPath
    */
-  public final void addDirectory(File directory, String targetPath) throws IOException {
+  public final void addDirectory(File directory) throws IOException {
     for (File file : directory.listFiles()) {
-      addFile(directory, file, targetPath);
+      addFile(directory, file, null);
     }
   }
 

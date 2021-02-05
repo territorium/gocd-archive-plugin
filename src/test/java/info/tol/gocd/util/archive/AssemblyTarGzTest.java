@@ -14,24 +14,13 @@ public class AssemblyTarGzTest {
     String target = "smartio-$APP_VERSION+$BUILD_NUMBER.tar.gz";
 
     List<String> sources = new ArrayList<>();
-    sources.add("$QT_HOME/$QT_ARCH/{plugins/sqldrivers/*}");
-    sources.add("$QT_HOME/$QT_ARCH/{lib/libicu*}");
-    sources.add("$QT_HOME/$QT_ARCH/{lib/libQt5Core*}");
-    sources.add("$QT_HOME/$QT_ARCH/{lib/libQt5Network*}");
-    sources.add("$QT_HOME/$QT_ARCH/{lib/libQt5Sql*}");
-    sources.add("{bin/smartIO-odb}");
-    sources.add("{lib/libsmartIO-core.so*}");
-    sources.add("{lib/libsmartIO-data.so*}");
-    String source = String.join("\n", sources);
-
-    sources = new ArrayList<>();
+    sources.add("bin/smartIO-odb;bin");
+    sources.add("lib/{libsmartIO-*.so*};lib");
     sources.add("$QT_HOME/$QT_ARCH/{plugins/sqldrivers/*}");
     sources.add("$QT_HOME/$QT_ARCH/lib/{libicu*,libQt5Core*,libQt5Network*,libQt5Sql*};lib");
-    sources.add("lib/{libsmartIO-*.so*};lib");
-    sources.add("{bin/smartIO-odb}");
-    source = String.join("\n", sources);
+    String source = String.join("\n", sources);
 
-    
+
     Environment env = new Environment();
     env.set("APP_VERSION", "1.0");
     env.set("BUILD_NUMBER", "123");

@@ -10,18 +10,18 @@ public class ArchiverTest {
     File workingDir = new File("/data/smartIO/test");
 
     try (ArchiveBuilder c = Archive.builder(new File(workingDir, "test.tar"))) {
-      c.addDirectory(new File(workingDir, "qt-5.12.7-gcc-tools"),null);
+      c.addDirectory(new File(workingDir, "qt-5.12.7-gcc-tools"));
     }
 
     try (ArchiveBuilder c = Archive.builder(new File(workingDir, "test.tar.gz"))) {
-      c.addDirectory(new File(workingDir, "qt-5.12.7-gcc-tools"),null);
+      c.addDirectory(new File(workingDir, "qt-5.12.7-gcc-tools"));
       // c.addFile(workingDir, "Monitor");
       // c.addFile(new File(workingDir, "qt-5.12.7-gcc-tools"), "");
     }
 
     try (ArchiveBuilder c = Archive.builder(new File(workingDir, "test.zip"))) {
-      c.addDirectory(new File(workingDir, "qt-5.12.4-msvc-tools"),null);
-      c.addFile(workingDir, "[bin]Monitor.exe",null);
+      c.addDirectory(new File(workingDir, "qt-5.12.4-msvc-tools"));
+      c.addFile(workingDir, "[bin]Monitor.exe", null);
       // c.addFile(new File(workingDir, "qt-5.12.4-msvc-tools"), "");
     }
   }

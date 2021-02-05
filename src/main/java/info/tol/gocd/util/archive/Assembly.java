@@ -18,6 +18,7 @@ package info.tol.gocd.util.archive;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
@@ -28,9 +29,11 @@ import java.util.regex.Pattern;
  */
 public class Assembly {
 
-  private static final Pattern PATTERN = Pattern.compile("^([^\\{]*)(?:\\{(.+)\\})?(?:;(.+))?$");
+  private static final Pattern PATTERN_FILE = Pattern.compile("\\{([^}]+)\\}");
+  private static final Pattern PATTERN_PATH = Pattern.compile("^([^\\{;]*)(?:/([^;]+))?(?:;(.+))?$");
 
-  private final File           workingDir;
+
+  private final File workingDir;
 
 
   private File               archive;
@@ -84,7 +87,7 @@ public class Assembly {
   public final void build(Consumer<String> consumer) throws IOException {
     try (ArchiveBuilder builder = Archive.builder(this.archive)) {
       for (String input : this.patterns) {
-        Matcher matcher = Assembly.PATTERN.matcher(input);
+        Matcher matcher = Assembly.PATTERN_PATH.matcher(input);
         if (matcher.find()) {
           File file = new File(matcher.group(1));
           if (!file.exists())
@@ -94,16 +97,60 @@ public class Assembly {
           }
 
           if (matcher.group(2) != null) {
-            builder.addFile(file, matcher.group(2), matcher.group(3));
-          } else if (file.isDirectory()) {
-            builder.addDirectory(file, null);
+            for (String sourcePath : parsePatterns(matcher.group(2))) {
+              builder.addFile(file, sourcePath, matcher.group(3));
+            }
+          } else if (!file.isDirectory()) {
+            builder.addFile(file.getParentFile(), file, matcher.group(3));
           } else {
-            builder.addFile(file.getParentFile(), file, null);
+            builder.addDirectory(file);
           }
         } else {
           throw new IOException("Couldn't find pattern '" + input + "'");
         }
       }
+    }
+  }
+
+  /**
+   * Parses all combinations of ile patterns.
+   *
+   * @param text
+   */
+  private static List<String> parsePatterns(String text) {
+    List<String> files = new ArrayList<>();
+    Matcher m = PATTERN_FILE.matcher(text);
+
+    int offset = 0;
+    while (m.find()) {
+      if (m.start() > offset) {
+        appendPatternPart(files, text.substring(offset, m.start()));
+      }
+      appendPatternPart(files, m.group(1).split(","));
+      offset = m.end();
+    }
+    if (offset < text.length()) {
+      appendPatternPart(files, text.substring(offset));
+    }
+    return files;
+  }
+
+  /**
+   * Append the parts to the current pattern
+   * 
+   * @param patterns
+   * @param parts
+   */
+  private static void appendPatternPart(List<String> patterns, String... parts) {
+    if (patterns.isEmpty()) {
+      patterns.addAll(Arrays.asList(parts));
+    } else {
+      List<String> list = new ArrayList<>();
+      for (String part : parts) {
+        patterns.stream().forEach(p -> list.add(p + part));
+      }
+      patterns.clear();
+      patterns.addAll(list);
     }
   }
 
